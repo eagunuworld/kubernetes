@@ -1,0 +1,88 @@
+##########################
+mkdir /root/binaries
+cd /root/binaries
+wget https://github.com/etcd-io/etcd/releases/download/v3.4.0/etcd-v3.4.0-linux-amd64.tar.gz
+tar -xzvf etcd-v3.4.0-linux-amd64.tar.gz
+cd /root/binaries/etcd-v3.4.0-linux-amd64
+cp etcd etcdctl /usr/bin/
+######################################
+ETCDCTL_API=3 etcdctl --data-dir=/var/lib/backup-etcd snapshot restore /opt/backup-etcd.db
+#backup etcd
+ETCDCTL_API=3 etcdctl  --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key" member list
+ETCDCTL_API=3 etcdctl snapshot save /opt/backup-etcd.db --endpoints=https://10.182.0.8:2379 --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key"
+#kubeadm-master, https://10.182.0.30:2380, https://10.182.0.30:2379, false
+#etcd restore
+#ETCDCTL_API=3 etcdctl snapshot restore /opt/snapshot-etcd.db --data-dir=/var/lib/my-etcd-backuphttps://10.182.0.9:2379
+ETCDCTL_API=3 etcdctl --write-out=table snapshot status /opt/backup-etcd.db
+ETCDCTL_API=3 etcdctl snapshot restore /opt/backup-etcd.db --data-dir=/var/lib/backup-etcd
+ETCDCTL_API=3 etcdctl snapshot restore /opt/backup-etcd.db  --data-dir=/var/lib/etcd-backup --endpoints=https://10.182.0.8:2379 --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key"
+##################
+###############################################
+46  ls /var/lib/etcd/
+47  ls /var/lib/etcd-from-backup
+48  ls /var/lib/etcd-from-backup/member/
+49  cd /etc/kubernetes/manifests/
+57  docker ps -a | grep my-etcd-backup
+62  docker logs -f 4d4b8833fca8
+############################
+kubectl patch pvc "myclaim"  --namespace "default" --patch '{"spec": {"resources": {"requests": {"storage": "5Gi"}}}}'
+kubectl patch pvc "pv-volume" --namespace "default" --patch '{"spec": {"resources": {"request": {"storage": "100Mi"}}}}' --record
+
+
+kubectl patch pvc/"pv-volume" \
+  --namespace "default" \
+  --patch '{"spec": {"resources": {"requests": {"storage": "70Mi"}}}}'
+
+
+Question 4:
+Lab Environment:
+master node: k8s-master
+worker node: k8s-node-01
+Display ONLY names of those nodes which DO NOT have label node-role.kubernetes.io/master= configured.
+There should be only one column called NAME.
+
+kubectl get node --selector='!node-role.kubernetes.io/master'
+kubectl get node --selector='name=my-label'
+kubectl get nodes -l=' name=my-label' -o=custom-columns=NAME:.metadata.name
+##############################################
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv0003
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  hostPath:
+    path: /tmp
+############################
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: myclaim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: slow
+###################################
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+    - name: myfrontend
+      image: nginx
+      volumeMounts:
+      - mountPath: "/var/www/html"
+        name: mypd
+  volumes:
+    - name: mypd
+      persistentVolumeClaim:
+        claimName: myclaim
