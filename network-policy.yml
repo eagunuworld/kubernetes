@@ -1,0 +1,57 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: web-allow-all-ns-monitoring
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  ingress:
+    - from:
+      - namespaceSelector:     # chooses all pods in namespaces labelled with team=operations
+          matchLabels:
+            team: operations
+        podSelector:           # chooses pods with type=monitoring
+          matchLabels:
+            type: monitoring
+#Allow network from  ns with this podSelector
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: foo-allow-to-hello
+spec:
+  policyTypes:
+  - Egress
+  podSelector:
+    matchLabels:
+      app: foo
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: hello
+  - ports:
+    - port: 53
+      protocol: TCP
+    - port: 53
+      protocol: UDP
+#Allow flow from pods with ports no
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: hello-allow-from-foo
+spec:
+  policyTypes:
+  - Ingress
+  podSelector:
+    matchLabels:
+      app: hello
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: foo
+#Allow flow from pods with label in all ns
