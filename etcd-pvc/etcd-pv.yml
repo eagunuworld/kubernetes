@@ -20,6 +20,45 @@ ETCDCTL_API=3 etcdctl --write-out=table snapshot status /opt/backup-etcd.db
 ETCDCTL_API=3 etcdctl snapshot restore /opt/backup-etcd.db --data-dir=/var/lib/backup-etcd
 ETCDCTL_API=3 etcdctl snapshot restore /opt/backup-etcd.db  --data-dir=/var/lib/etcd-backup --endpoints=https://10.182.0.8:2379 --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key"
 ##################
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-port-from-namespace
+  namespace: eagunu
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          team: internal
+    - ports:
+      - port: 80
+        protocol: TCP
+      - port: 80
+        protocol: UDP 
+ ---
+ apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: multi-port-egress
+  namespace: cka
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          team: internaleage
+    ports:
+    - protocol: TCP
+      port: 9000999
+
 ###############################################
 46  ls /var/lib/etcd/
 47  ls /var/lib/etcd-from-backup
