@@ -1,0 +1,45 @@
+variables:
+  DOCKER_REGISTRY: 866316176219.dkr.ecr.us-east-2.amazonaws.com
+  AWS_DEFAULT_REGION: us-east-2
+  APP_NAME: maven-demo
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+stages:
+  - maven-package
+  - build-image
+
+maven_package:
+  stage: maven-package
+  script:
+    - ls -lart
+    - mvn package
+  artifacts:
+    paths:
+      - /home/gitlab-runner/
+  tags:
+    - maven-demo-tag
+  only:
+    - main
+
+publish:
+  stage: build-image
+  image:
+    name: docker:latest
+  services:
+    - docker:19-dind
+  before_script:
+    - apk add --no-cache curl jq python3 py3-pip
+    - pip install awscli
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+    - aws --version
+    - docker info
+    - docker --version
+  script:
+    - docker build -t $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID .
+    - docker push $DOCKER_REGISTRY/$APP_NAME:$CI_PIPELINE_IID
+  # tags:
+  #   - docker
+  only:
+    - main

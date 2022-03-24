@@ -1,0 +1,9 @@
+#https://devopscube.com/setup-ingress-gke-ingress-controller/
+#gcloud compute addresses create ingress-webapps --global
+#gcloud compute addresses delete ingress-webapps --global
+#How to install ingress in all cloud Platform
+#kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/cloud/deploy.yaml
+
+kubectl create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user $(gcloud config get-value account)
+
+kubectl delete clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user $(gcloud config get-value account)

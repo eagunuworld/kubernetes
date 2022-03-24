@@ -1,0 +1,5 @@
+kubectl get po
+kubectl get po --show-labels
+kubectl top pod -l app=my-pod
+kubectl top pod my-pod-cbdfc6764-b9488  -l app=my-pod
+kubectl top pod my-pod-cbdfc6764-b9488 /opt/KUTRO100401/KUTRO100401.txt

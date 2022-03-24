@@ -1,0 +1,18 @@
+kubectl create deploy my-pod --image=nginx
+########################
+kubectl create deploy my-pod --image=nginx
+kubectl get deploy
+kubectl get po
+kubectl scale deploy my-pod --replica 8
+kubectl scale deploy my-pod --replicas 8
+
+kubectl get po -o wide
+kubectl get nodes
+kubectl drain node gke-cka-default-pool-b432e80c-0f7f
+kubectl drain gke-cka-default-pool-b432e80c-0f7f
+kubectl drain gke-cka-default-pool-b432e80c-0f7f --ignore-daemonsets --delete-emptydir-data
+kubectl get po -o wide
+kubectl get nodes
+kubectl get ns
+kubectl get po -n kube-system
+kubectl get po -n kube-system -o wide

@@ -1,0 +1,41 @@
+kubectl apply -f pv.yml -f pvc.yml -f pv-pvc-claim.yml
+kubectl get po
+kubectl get po -o wide
+kubectl get pv
+kubectl get pv -o wide
+kubectl get pvc
+kubectl describe pvc myclaim
+kubectl patch pvc "pv-volume"  --namespace "default" --patch '{"spec": {"resources": {"requests": {"storage": "70Mi"}}}}
+kubectl patch pvc --help
+
+kubectl create ns cka
+kubectl apply -f pv.yml
+
+kubectl get po -n cka
+kubectl get po -n cka
+kubectl get pvc  -n cka
+kubectl patch pvc "myclaim02" --namespace cka --patch '{"spec": {"resources": {"requests": {"storage": "5Gi"}}}}'
+kubectl get pvc  -n cka
+kubectl get pvc  -n cka
+kubectl get pv
+kubectl get pvc  -n cka
+kubectl get pvc  -n cka
+##########################
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pd
+spec:
+  containers:
+  - image: k8s.gcr.io/test-webserver
+    name: test-container
+    volumeMounts:
+    - mountPath: /test-pd
+      name: test-volume
+  volumes:
+  - name: test-volume
+    hostPath:
+      # directory location on host
+      path: /data
+      # this field is optional
+      type: Directory

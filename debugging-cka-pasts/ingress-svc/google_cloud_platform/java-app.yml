@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: nginx-deploy
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx-deploy
+    spec:
+      containers:
+      - name: nginx-deploy
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /index.html
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        volumeMounts:
+            - name: nginx-deploy
+              mountPath: /usr/share/nginx/html/
+      volumes:
+      - name: nginx-deploy
+        configMap:
+          name: nginx-index-html-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-index-html-config
+  namespace: default
+data:
+  index.html: |
+    <html>
+    <h1>I Am From Version-03</h1>
+    </br>
+    <h1>Hi! You are Trying to Access Webapp Through GKE Ingress hello page </h1>
+    </html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-deploy
+  namespace: default
+spec:
+  selector:
+    app: nginx-deploy
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80

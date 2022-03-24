@@ -1,0 +1,53 @@
+#https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/
+#sudo vi /etc/hosts
+apiVersion: "networking.k8s.io/v1beta1"
+kind: "Ingress"
+metadata:
+  name: "example-ingress"
+spec:
+  ingressClassName: "external-lb"
+  rules:
+  - host: "local.example.com"
+    http:
+      paths:
+      - path: "/example"
+        pathType: "Prefix"
+        backend:
+          serviceName: "example-service"
+          servicePort: 80
+######################
+#
+https://kubernetes.io/docs/concepts/services-networking/ingress/
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx-example
+  rules:
+  - http:
+      paths:
+      - path: /testpath
+        pathType: Prefix
+        backend:
+          service:
+            name: test
+            port:
+              number: 80
+#########################
+kubectl describe ing hello-ingress -n ping
+kubectl describe ing hello-ingress -n ping
+kubectl describe ing hello-ingress -n ping
+kubectl describe ing hello-ingress -n ping
+kubectl describe ing hello-ingress -n ping
+kubectl get svc -n ping
+kubectl get ing -n ping -o wide
+curl -kl 35.190.19.174/hello
+curl -kl 35.190.19.174/hello
+curl -kl 35.190.19.174/hello
+kubectl get svc -n ping
+kubectl describe ing hello-ingress -n ping
+kubectl describe ing hello-ingress -n ping
+#https://kubernetes.io/docs/concepts/services-networking/ingress/#the-ingress-resource

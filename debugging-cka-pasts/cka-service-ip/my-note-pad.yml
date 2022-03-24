@@ -1,0 +1,22 @@
+root@kubeadm-master:~/ping# kubectl get po,svc -n ping -o wide
+NAME                         READY   STATUS    RESTARTS   AGE    IP           NODE             NOMINATED NODE   READINESS GATES
+pod/hello-66769f9b6f-h5crx   1/1     Running   0          152m   10.44.0.18   kubeadm-node01   <none>           <none>
+pod/hello-66769f9b6f-m2grl   1/1     Running   0          152m   10.44.0.17   kubeadm-node01   <none>           <none>
+
+NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE    SELECTOR
+service/two-services   ClusterIP   10.110.110.188   <none>        80/TCP    152m   app=hello
+
+#front testing from a new terminal 
+#kubectl run -it ubuntu --image=ubuntu
+root@ubuntu:/# history
+apt-get update && apt-get install curl -y
+    3  curl 10.44.0.18
+    # 4  apt-get install curl -y
+    5  curl 10.44.0.18 pod ip
+    6  clear
+    7  curl 10.110.110.188:80 ClusterIP service ip
+    8  curl 10.44.0.17
+    9  curl 10.110.110.188
+   10  clear
+   11  curl 10.110.110.189
+   12  history

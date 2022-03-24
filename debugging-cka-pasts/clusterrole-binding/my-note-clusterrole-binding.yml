@@ -1,0 +1,113 @@
+#####################################################
+##############################################
+kubectl create clusterrole deployment05 --verb=create --resource=Deployment,StatefulSet,DaemonSet
+kubectl describe clusterrole deployment05
+kubectl create ns app-team05
+kubectl create serviceaccount cicd-token05 -n app-team05
+kubectl describe serviceaccount cicd-token05 -n app-team05
+kubectl create clusterrolebinding my-binding05 --clusterrole=deployment05 --serviceaccount=app-team1:cicd-token
+kubectl describe clusterrolebinding my-binding05
+###########################
+#####################################
+kubectl create clusterrole deploy08 --verb=create --resource=Deployment,StatefulSet,DaemonSet
+kubectl create ns app-team08
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ci-cd-token08
+  namespace: app-team08
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: my-binding
+subjects:
+- kind: ServiceAccount
+  name: ci-cd-token08
+  apiGroup: ""
+  namespace: app-team08
+roleRef:
+  kind: ClusterRole
+  name: deploy08
+  apiGroup: ""
+#############################################################
+
+#https://kubernetes.io/docs/reference/access-authn-authz/rbac/#command-line-utilities
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: aggregate-cron-tabs-edit
+  labels:
+    # Add these permissions to the "admin" and "edit" default roles.
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+rules:
+- apiGroups: [""]
+  resources: ["crontabs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+#############################################################
+kubectl create clusterrole deployment-clusterrole --verb=create --resource=Deployment,StatefulSet,DaemonSet
+###########################################################
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: create-resource
+rules:
+- apiGroups: [""]
+  resources: ["Deployment,StatefulSet,DaemonSet"]
+  verbs: ["create]
+######################################
+apiVersion: rbac.authorization.k8s.io/v1
+# This role binding allows "jane" to read pods in the "default" namespace.
+# You need to already have a Role named "pod-reader" in that namespace.
+kind: RoleBinding
+metadata:
+  name: read-pods
+  namespace: default
+subjects:
+# You can specify more than one "subject"
+- kind: User
+  name: jane # "name" is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  # "roleRef" specifies the binding to a Role / ClusterRole
+  kind: Role #this must be Role or ClusterRole
+  name: pod-reader # this must match the name of the Role or ClusterRole you wish to bind to
+  apiGroup: rbac.authorization.k8s.io
+#############################
+apiVersion: rbac.authorization.k8s.io/v1
+# This cluster role binding allows anyone in the "manager" group to read secrets in any namespace.
+kind: ClusterRoleBinding
+metadata:
+  name: read-secrets-global
+subjects:
+- kind: ServiceAccount
+  name: cicd # Name is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: create-resource
+  apiGroup: rbac.authorization.k8s.io
+###################################################
+kubectl create clusterrole pod-reader --verb=get,list,watch --resource=pods
+Create a ClusterRole named "pod-reader" with resourceNames specified:
+
+kubectl create clusterrole pod-reader --verb=get --resource=pods --resource-name=readablepod --resource-name=anotherpod
+Create a ClusterRole named "foo" with apiGroups specified:
+
+kubectl create clusterrole foo --verb=get,list,watch --resource=replicasets.apps
+Create a ClusterRole named "foo" with subresource permissions:
+
+kubectl create clusterrole foo --verb=get,list,watch --resource=pods,pods/status
+Create a ClusterRole named "foo" with nonResourceURL specified:
+
+kubectl create clusterrole "foo" --verb=get --non-resource-url=/logs/*
+Create a ClusterRole named "monitoring" with an aggregationRule specified:
+
+kubectl create clusterrole monitoring --aggregation-rule="rbac.example.com/aggregate-to-monitoring=true"
+
+kubectl create clusterrole deployment-clusterrole --verb=create --resource=Deployment,DaemonSet,StatefulSet
+
+kubectl create clusterrolebinding myapp --clusterrole=deployment-clusterrole --serviceaccount=app-team1:ci-cd-token

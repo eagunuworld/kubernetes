@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-hello
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: nginx-hello
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx-hello
+    spec:
+      containers:
+      - name: nginx-hello
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /index.html
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        volumeMounts:
+            - name: nginx-hello
+              mountPath: /usr/share/nginx/html/
+      volumes:
+      - name: nginx-hello
+        configMap:
+          name: nginx-index-html
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-index-html
+  namespace: default
+data:
+  index.html: |
+    <html>
+    <h1>I Am Working Hello Page:Version 2</h1>
+    </br>
+    <h1>Hi I Am Really On Verson 2.Thanks Google Cloud Platform Yesterday</h1>
+    </html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-hello
+  namespace: default
+spec:
+  selector:
+    app: nginx-hello
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80

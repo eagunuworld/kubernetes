@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    name: webapp-1
+  name: webapp-1
+  namespace: default
+
+spec:
+# Init container fo creating the log directory and file
+# on the emptyDir volume, which will be passed to the containers
+  initContainers:
+  - name: create-log-file
+    image: busybox
+    command:
+      - sh
+      - -c
+      - |
+          #!/bin/sh
+          mkdir -p /var/log/k8slog
+          touch /var/log/k8slog/application.log
+# Mount varlog volume to the Init container
+    volumeMounts:
+    - name: varlog
+      mountPath: /var/log
+
+  containers:
+  - image: kodekloud/event-simulator
+    imagePullPolicy: Always
+    name: simple-webapp
+    command:
+      - sh
+      - -c
+      - |
+          i=0
+          while true; do
+            echo "$i: $(date)" >> /var/log/k8slog/application.log
+            echo "$(date) INFO $i"
+            i=$((i+1))
+          sleep 1
+          done
+# Mount varlog volume to simple-webapp container
+    volumeMounts:
+    - name: varlog
+      mountPath: /var/log
+  - name: count-log-1
+    image: busybox
+    command:
+      - sh
+      - -c
+      - |
+          tail -n+1 -f /var/log/k8slog/application.log
+# Mount varlog volume to count-log-1 container
+    volumeMounts:
+    - name: varlog
+      mountPath: /var/log
+
+#Define na emptyDir shared volume
+  volumes:
+  - name: varlog
+    emptyDir: {}
