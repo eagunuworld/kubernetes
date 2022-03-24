@@ -1,0 +1,75 @@
+THIS PART IS WORKING
+=====================
+Installation_website
+#https://cloud.google.com/sdk/docs/install
+region: us-central1-a
+us-east1-b
+export CLUSTER_NAME=cka
+export CLUSTER_ZONE=us-east1-b
+n1-standard-1 $0.03325 hourly
+n1-standard-2
+n1-standard-4
+n1-standard-8
+gcloud container clusters create $CLUSTER_NAME --image-type COS --num-nodes 2 --machine-type n1-standard-1 --zone $CLUSTER_ZONE
+gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
+gcloud container clusters delete $CLUSTER_NAME --zone $CLUSTER_ZONE
+gcloud container clusters delete $CLUSTER_NAME --zone $CLUSTER_ZONE
+gcloud container clusters delete cka --zone us-east1-b
+gcloud container clusters get-credentials mygke
+
+6.GCP
+gcloud container clusters create gkek8s  --node-locations us-central1-a,us-central1-b,us-central1-f --num-nodes 1 --enable-autoscaling --min-nodes 1 --max-nodes 6
+
+##gcloud container clusters create mygkek8s --num-nodes=3 --machine-type=n1-standard-2 --zone=us-central1-a --cluster-version=1.8.6-gke.0
+gcloud container clusters create mygkek8s --disk-size 30 --zone us-central1-a --machine-type n1-standard-2 --num-nodes 2
+gcloud container get-server-config
+gcloud container clusters upgrade mygkek8s --master
+gcloud container clusters upgrade mygkek8s --master --cluster-version 1.18.12-gke.N
+gcloud container get-server-config --zone us-central1-a
+
+gcloud container clusters create mygkek8s --disk-size 30 --zone us-central1-a --machine-type n1-standard-2 --num-nodes 3
+gcloud container clusters delete mygkek8s --zone us-central1-a
+######################################################################################### xcvb
+
+systemctl docker restart
+kubectl create deployement deploy1 --image=nginx --dry-run -o yaml
+kubectl create deployment deploy1 --image=nginx --dry-run=client -o yaml
+
+kubectl run nginx --image=nginx --dry-run=client -o yaml
+kubectl run nginx --image=nginx --port=80 --dry-run=client -o yaml
+
+kubectl describe node kubeadm-worker-01
+
+kubectl run nginx --image=nginx
+
+##secord guy udemy
+Resources
+The vagrant file used in the next video is available here:
+
+https://github.com/kodekloudhub/certified-kubernetes-administrator-course
+
+Here's the link to the documentation:
+
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+gke default zone console
+-----------------------
+
+  Something That I can Remember about this report: August 14 20201(About 1pm)
+  I have added my bank transaction,screenshot of GPS and list of police report showing food items(You have the food items report already).
+That day I went for shopping,first I went to target after shopping at target,I left target and went to Walmart from Walmart I went  to Fingerlicking to buy Africa food(My August bank statement has this transaction).I used GPS
+to locate the Fingerlicking,but GPS took me to Fingerlicking old location even today I typed Fingerlicking is still pointing to the old location via GPS, when I got there they have moved to a new location the address I saw there
+I entered the GPS again,when I got to the new place I packed and I was looking for the place to food.I saw a lady trekking to my direction and to make thing faster for me,I decided to ask her for the restaurant!
+  These are the conversions that I can remember!
+Eghosa: I asked,please can you show me  Fingerlicking (she was a little bit far from my car where I packed and she came closer)
+She: she said! Do you want a show,I mean a show (she repeated this statements)
+Eghosa: I said yes (Thinking she was going to show me the direction or the restaurant,I don't really know what she met by the word SHOW)
+she: she said again! How much (I thought she needed money from me and show me the restaurant something this happened.Some people demand something to help)
+Eghosa: I said 4 dollar but I can't really remember the exact amout but I said something stupid
+She: she said again! Do you have a condom (this time I started to imagine something strange but she was very fast askng these questions in fact she controled the conversions)
+Eghosa: I said no
+She: Then she said leave,there are cops arround  here and she just left
+
+
+ So I was thing why should I run from cops and I was watching her,she entered a white car and the car drove and packed at the back of my car
+After about 4 minute the police came and arrested me,they did not tell me why I was being arrested untill they took me somewhere
+and said I was soliciting for prostitute and I tried to explain to them they refused to listen and they took me to Jail
