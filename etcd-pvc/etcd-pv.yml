@@ -1,14 +1,41 @@
-##########################
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  # "namespace" omitted since ClusterRoles are not namespaced
+  name: lusterrole
+rules:
+- apiGroups: [""]
+  resources: ["Deployment", "StatefulSet", "DaemonSet"]
+  verbs: ["create"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: my-sa-name
+  namespace: app-team1
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cicd-clusterrole-binging
+subjects:
+- kind: ServiceAccount
+  name: my-sa-name
+  namespace: app-team1
+roleRef:
+  kind: ClusterRole
+  name: deployment-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+
+
+****
 mkdir /root/binaries
 cd /root/binaries
 wget https://github.com/etcd-io/etcd/releases/download/v3.4.0/etcd-v3.4.0-linux-amd64.tar.gz
 tar -xzvf etcd-v3.4.0-linux-amd64.tar.gz
 cd /root/binaries/etcd-v3.4.0-linux-amd64
 cp etcd etcdctl /usr/bin/
-######################################
-kubectl patch pvc "myclaim"  --namespace "default" --patch '{"spec": {"resources": {"requests": {"storage": "5Gi"}}}}'
-kubectl patch pvc "pv-volume" --namespace "default" --patch '{"spec": {"resources": {"request": {"storage": "100Mi"}}}}' --record
-##########################
+***
 ETCDCTL_API=3 etcdctl --data-dir=/var/lib/backup-etcd snapshot restore /opt/backup-etcd.db
 #backup etcd
 ETCDCTL_API=3 etcdctl  --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key="/etc/kubernetes/pki/etcd/server.key" member list
@@ -59,63 +86,14 @@ spec:
     - protocol: TCP
       port: 9000999
 
-###############################################
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  # "namespace" omitted since ClusterRoles are not namespaced
-  name: lusterrole
-rules:
-- apiGroups: [""]
-  resources: ["Deployment", "StatefulSet", "DaemonSet"]
-  verbs: ["create"]
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: my-sa-name
-  namespace: app-team1
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: cicd-clusterrole-binging
-subjects:
-- kind: ServiceAccount
-  name: my-sa-name
-  namespace: app-team1
-roleRef:
-  kind: ClusterRole
-  name: deployment-clusterrole
-  apiGroup: rbac.authorization.k8s.io
- #####################
-46  ls /var/lib/etcd/
-47  ls /var/lib/etcd-from-backup
-48  ls /var/lib/etcd-from-backup/member/
-49  cd /etc/kubernetes/manifests/
-57  docker ps -a | grep my-etcd-backup
-62  docker logs -f 4d4b8833fca8
-############################
-kubectl patch pvc "myclaim"  --namespace "default" --patch '{"spec": {"resources": {"requests": {"storage": "5Gi"}}}}'
 kubectl patch pvc "pv-volume" --namespace "default" --patch '{"spec": {"resources": {"request": {"storage": "100Mi"}}}}' --record
 
 
-kubectl patch pvc/"pv-volume" \
-  --namespace "default" \
-  --patch '{"spec": {"resources": {"requests": {"storage": "70Mi"}}}}'
-
-
-Question 4:
-Lab Environment:
-master node: k8s-master
-worker node: k8s-node-01
-Display ONLY names of those nodes which DO NOT have label node-role.kubernetes.io/master= configured.
-There should be only one column called NAME.
 
 kubectl get node --selector='!node-role.kubernetes.io/master'
 kubectl get node --selector='name=my-label'
 kubectl get nodes -l=' name=my-label' -o=custom-columns=NAME:.metadata.name
-##############################################
+
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -128,7 +106,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   hostPath:
     path: /tmp
-############################
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -141,7 +119,7 @@ spec:
     requests:
       storage: 8Gi
   storageClassName: slow
-###################################
+
 apiVersion: v1
 kind: Pod
 metadata:
