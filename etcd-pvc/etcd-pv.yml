@@ -87,6 +87,33 @@ kubectl patch pvc "pv-volume" --namespace "default" --patch '{"spec": {"resource
 kubectl get node --selector='!node-role.kubernetes.io/master'
 kubectl get node --selector='name=my-label'
 kubectl get nodes -l=' name=my-label' -o=custom-columns=NAME:.metadata.name
+*********
+spec:
+  initContainers:
+  - name: create-log-file
+    image: busybox
+    command:
+      - sh
+      - -c
+      - |
+          #!/bin/sh
+          mkdir -p /var/log/k8slog
+          touch /var/log/k8slog/application.log
+# Mount varlog volume to the Init container
+    volumeMounts:
+    - name: varlog
+      mountPath: /var/log
+
+  **containers:
+      
+  - name: count-log-1
+    image: busybox
+    args: [/bin/sh, -c, 'tail -f -n+1 -f  /var/log/k8slog/application.log']
+# Mount varlog volume to count-log-1 container
+    volumeMounts:
+    - name: varlog
+      mountPath: /var/log
+*******
 
 apiVersion: v1
 kind: PersistentVolume
