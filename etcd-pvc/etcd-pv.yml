@@ -114,7 +114,9 @@ spec:
     - name: varlog
       mountPath: /var/log
 *******
-
+kubectl get nodes -o jsonpath='{.items[*].status.nodeInfo.osImage}'
+kubectl run nslookup --image=busybox:1.28 --restart=Never --command sleep 4800 -n nslookup
+*****
 apiVersion: v1
 kind: PersistentVolume
 metadata:
